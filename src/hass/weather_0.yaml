@@ -1,0 +1,27 @@
+sensor:
+ - platform: mqtt
+   state_topic: Weather_0/temp
+   name: "bedroom-temp"
+   device_class: "temperature"
+   unit_of_measurement: "°C"
+ - platform: mqtt
+   state_topic: Weather_0/hum
+   name: "bedroom-hum"
+   device_class: "humidity"
+   unit_of_measurement: "%"
+ - platform: mqtt
+   state_topic: Weather_0/vcc
+   device_class: "voltage"
+   name: "W0 vcc"
+   unit_of_measurement: "V"
+ - platform: mqtt
+   state_topic: Weather_0/status
+   name: "W0 status"
+ - platform: mqtt
+   state_topic: Weather_0/time0
+   unit_of_measurement: "Sec"
+   name: "W0 connected"
+ - platform: mqtt
+   state_topic: Weather_0/time1
+   unit_of_measurement: "Sec"
+   name: "W0 published"
