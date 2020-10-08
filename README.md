@@ -21,7 +21,9 @@ Let's take a look at the overall architecture of the system, where Weather stati
 ![Schematics](img/weather_schem.png)
 
 ### ESP8266 MCU
-The weather station uses following pins of ESP8266 MCU:
+The weather station is built around ESP-12F, which is an ESP8266 variant.
+
+The device uses following pins of ESP-12F MCU:
 * VCC, GND - for powering it up with 3.3V,
 * GPIO0 - for wake up circuitry,
 * GPIO4 - input from weather sensor,
@@ -30,16 +32,20 @@ The weather station uses following pins of ESP8266 MCU:
 * RESET - for manual reset and wake up circuitry,
 * CH_PD - must be kept high.
 
-Theoretically each ESP module with following pins exposed is suitable. With some concession it should be also doable to implement this device with ESP-01 module.
-
 ### Power supply unit
-The device is designed to be powered from battery. The ESP module itself is well known of being power hungry, especially when handling WiFi connection thus it is not very suitable for operating on battery. The specifics of the weather station is, however, that it just wakes up every n minutes, gather measurements and sends it to the hub. This assumption helps us greatly, because we can use so-called deep sleep mode of ESP8266 to reduce current from around 80mA to 10uA.
-
-The ESP8266 itself operates in 3.0-3.6V area and nominal voltage should be around 3.3V. I have seen it working in 2.5-3.0V area as well, however stability problems were occasionally visible. Theoretically a bare ESP module (like ESP-12F or ESP-01) can be powered directly from a pack of 2xAA batteries, but we shouldn't expect a long running time, because the 3.10V initial voltage drops below limits rather quickly.
+The device uses single Li-ion 4.2V cell to power itself. The voltage is lowered to nominal 3.3V with LDO voltage regulator (U1, Microship MCP1700-3302E/TO). This regular has a very low dropout voltage (178mV) and can deliver up to 250mA, which is sufficient for ESP8266 and DHT11 sensor. Two capacitors C1 and C2 are used to further stabilize the output voltage. This should ensure stable operation of ESP microcontroller during wake-up procedure.
 
 ### Voltage measurement circuitry
+The device measures Li-ion cell voltage via ADC analog input. Voltage readouts are used for both reporing and to implement cell discharge protection (the voltage of Li-ion cell should never drop below 3V). Because ESP 8266 module (here ESP-12F) accepts only 0-1V on ADC pin, I use voltage divider to reduce voltage before it reaches ADC input. Two resistors R3 and R4 with relatively high resistance (220K and 68K respectively) are used to ensure low current flow thus reduce power consumption.
 
 ### Mode selection, deep sleep and reset circuitry
+By default, the device connects to the WiFi network and MQTT server, gather sensor readings and publish them and then goes for deep sleep for predefined amount of minutes. 
+
+Reset switch (S1) shorts reset pin and GND. Reset pin must be pulled up (R2).
+
+To ensure HTTP access to the firmware (ESP Easy) there is a special mode of operation that can be chosen during power-up or reset. When S2 switch is pressed for a few seconds after power-up or reset, the device enters config mode in which no deep sleep is used. Config mode can be turned off by subsequent reset (mode selection switch must be in released state).
+
+To ensure that ESP chip can wake up itself, RESET and GPIO0 pins must be connected.
 
 ### Sensor circuitry
 
