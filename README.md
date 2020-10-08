@@ -54,6 +54,25 @@ To ensure that ESP chip can wake up itself, RESET and GPIO0 pins must be connect
 ## Hardware assembly
 
 ### Bill of materials
+| #   | Code | Name        | Description                | Price (PLN) |
+|----:|:----:|-------------|----------------------------|------------:|
+|1    |ESP12F| MCU         | ESP-12F                    |12.99        |
+|2    |      | ESP Board   | SMD to THT adapter board   |2.90         |
+|3    |      | PCB         | Universal board 4x6cm      |2.99         |
+|4    |DHT11 | DHT11       | Temperature and humidity sensor|4.80     |
+|5    |U1    | LDO Regulator|Microship MCP1700-3302E/TO |1.59         |
+|6    |R1    | Resistor    | 10K                        |0.02         |
+|7    |R2    | Resistor    | 10K                        |0.02         |
+|8    |R3    | Resistor    | 220K                       |0.02         |
+|9    |R4    | Resistor    | 68K                        |0.02         |
+|10   |C1    | Capacitor   | Electrolitic, 1000uF       |0.50         |
+|11   |C2    | Capacitor   | Ceramic, 100nF             |1.39         |
+|12   |S1    | Switch      | Tact switch                |0.23         |
+|13   |S2    | Switch      | Tact switch                |0.23         |
+|14   |      | Cell basket | 18650 cell basket          |2.19         |
+|15   |      | Li-ion cell | 18650 4.2V 10800mA cell    |6.50         |
+|16   |      | Case        | ABS case with ventilation  |10.00        |
+|     |      |             |                   **Total**|**46.39**    |
 
 ### PCB design
 ![PCB](img/weather_pcb.png)
