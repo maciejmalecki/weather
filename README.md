@@ -1,5 +1,5 @@
 # WiFi Weather Station with ESP8266
-Here I describe a Weather station that I have assembled in few pieces and located in different places of my house. The station is able to collect several readings (temperature, humidity and optionally an air pressure) periodically and publish it via radio network.
+Here I describe a Weather station that I have assembled in a few instances and located in different places of my house. The station is able to collect several readings periodically (temperature, humidity and optionally an air pressure) and publish it via radio network.
 
 The Weather station has following features:
 * radio communication via WiFi,
@@ -21,8 +21,6 @@ Let's take a look at the overall architecture of the system, where Weather stati
 ![Schematics](img/weather_schem.png)
 
 ### ESP8266 MCU
-The weather station is built around ESP-12F, which is an ESP8266 variant.
-
 The device uses following pins of ESP-12F MCU:
 * VCC, GND - for powering it up with 3.3V,
 * RESET - for manual reset and wake up circuitry,
@@ -48,8 +46,17 @@ To ensure HTTP access to the firmware (ESP Easy) there is a special mode of oper
 To ensure that ESP chip can wake up itself, RESET and GPIO16 pins must be connected.
 
 ### Sensor circuitry
+In this particular project I use DHT11 sensor which is cheap and accurate enough for indoor usages. It sends data digitally via single signal line. It consumes 60-150uA when in standby mode (not measuring) and 0.5-2.5mA when measuring. In this particular project DHT11 is powered all the time, because it takes long time after powering this up to get reasonable readings. Depending on DHT11 model, it may require additional pull up register between data signal pin and VCC (10K should be just ok).
 
 ## Firmware
+This project uses ESP Easy firmware, which replaces the original AT firmware of the ESP-12F.
+
+### Flashing
+We use normal_ESP8266_4M1M image without VCC support (VCC measurement is done via dedicated external circuit). For bare ESP-12F module you need a USB programmer with a special flash-mode circuit.
+
+### Configuration
+
+### Rules definition
 
 ## Hardware assembly
 
