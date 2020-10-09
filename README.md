@@ -25,12 +25,12 @@ The weather station is built around ESP-12F, which is an ESP8266 variant.
 
 The device uses following pins of ESP-12F MCU:
 * VCC, GND - for powering it up with 3.3V,
-* GPIO0 - for wake up circuitry,
+* RESET - for manual reset and wake up circuitry,
+* CH_PD - must be kept high,
 * GPIO4 - input from weather sensor,
 * GPIO14 - input for mode selection switch,
-* ADC - analog input for voltage measurement circuitry,
-* RESET - for manual reset and wake up circuitry,
-* CH_PD - must be kept high.
+* GPIO16 - for wake up circuitry,
+* ADC - analog input for voltage measurement circuitry.
 
 ### Power supply unit
 The device uses single Li-ion 4.2V cell to power itself. The voltage is lowered to nominal 3.3V with LDO voltage regulator (U1, Microship MCP1700-3302E/TO). This regular has a very low dropout voltage (178mV) and can deliver up to 250mA, which is sufficient for ESP8266 and DHT11 sensor. Two capacitors C1 and C2 are used to further stabilize the output voltage. This should ensure stable operation of ESP microcontroller during wake-up procedure.
@@ -45,7 +45,7 @@ Reset switch (S1) shorts reset pin and GND. Reset pin must be pulled up (R2).
 
 To ensure HTTP access to the firmware (ESP Easy) there is a special mode of operation that can be chosen during power-up or reset. When S2 switch is pressed for a few seconds after power-up or reset, the device enters config mode in which no deep sleep is used. Config mode can be turned off by subsequent reset (mode selection switch must be in released state).
 
-To ensure that ESP chip can wake up itself, RESET and GPIO0 pins must be connected.
+To ensure that ESP chip can wake up itself, RESET and GPIO16 pins must be connected.
 
 ### Sensor circuitry
 
