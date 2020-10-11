@@ -72,14 +72,19 @@ We use normal_ESP8266_4M1M image without VCC support (VCC measurement is done vi
 |7    |R2    | Resistor    | 10K                        |0.02         |
 |8    |R3    | Resistor    | 220K                       |0.02         |
 |9    |R4    | Resistor    | 68K                        |0.02         |
-|10   |C1    | Capacitor   | Electrolitic, 1000uF       |0.50         |
-|11   |C2    | Capacitor   | Ceramic, 100nF             |1.39         |
-|12   |S1    | Switch      | Tact switch                |0.23         |
-|13   |S2    | Switch      | Tact switch                |0.23         |
-|14   |      | Cell basket | 18650 cell basket          |2.19         |
-|15   |      | Li-ion cell | 18650 4.2V 10800mA cell    |6.50         |
-|16   |      | Case        | ABS case with ventilation  |10.00        |
-|     |      |             |                   **Total**|**46.39**    |
+|10   |R5    | Resistor    | 10K                        |0.02         |
+|11   |R6    | Resistor    | 10K                        |0.02         |
+|12   |R7    | Resistor    | 10K                        |0.02         |
+|13   |R8    | Resistor    | 10K                        |0.02         |
+|14   |R9    | Resistor    | 10K                        |0.02         |
+|15   |C1    | Capacitor   | Electrolitic, 1000uF       |0.50         |
+|16   |C2    | Capacitor   | Ceramic, 100nF             |1.39         |
+|17   |S1    | Switch      | Tact switch                |0.23         |
+|18   |S2    | Switch      | Tact switch                |0.23         |
+|19   |      | Cell basket | 18650 cell basket          |2.19         |
+|20   |      | Li-ion cell | 18650 4.2V 10800mA cell    |6.50         |
+|21   |      | Case        | ABS case with ventilation  |10.00        |
+|     |      |             |                   **Total**|**46.49**    |
 
 ### PCB design
 ![PCB](img/weather_pcb.png)
