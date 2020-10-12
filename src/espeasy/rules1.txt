@@ -16,23 +16,27 @@ on MQTT#Disconnected do
 endon
 
 on evtStart do
+  TaskValueSet,3,1,1
   Let,1,%unixday_sec%
   if [Plugin#GPIO#Pinstate#14]=1
     TimerSet,2,1
   else
+    if [vcc#vcc]<3.40
+      DeepSleep,4294
+    endif
     TaskValueSet,3,1,0
   endif
   TimerSet,3,30
 endon
 
 on evtPublish do
-  Publish,%sysname%_%unit%/temp,[weather#temp]
-  Publish,%sysname%_%unit%/hum,[weather#hum]
   Publish,%sysname%_%unit%/vcc,[vcc#vcc]
   Publish,%sysname%_%unit%/status,[dummy#mode]
   Let,3,%unixday_sec%-%v1%
   Publish,%sysname%_%unit%/time0,%v2%
   Publish,%sysname%_%unit%/time1,%v3%
+  Publish,%sysname%_%unit%/temp,[weather#temp]
+  Publish,%sysname%_%unit%/hum,[weather#hum]
   AsyncEvent,evtNext
 endon
 
@@ -50,8 +54,13 @@ endon
 
 on Rules#Timer=2 do
   TaskValueSet,3,1,[Plugin#GPIO#Pinstate#14]
+  TimerSet,4,600
 endon
 
 on Rules#Timer=3 do
   AsyncEvent,evtNext
 endon
+
+on Rules#Timer=4 do
+  DeepSleep,900
+endif
