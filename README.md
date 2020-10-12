@@ -61,9 +61,20 @@ In this particular project I use DHT11 sensor which is cheap and accurate enough
 This project uses ESP Easy firmware, which replaces the original AT firmware of the ESP-12F.
 
 ### Flashing
-We use normal_ESP8266_4M1M image without VCC support (VCC measurement is done via dedicated external circuit). For bare ESP-12F module you need a USB programmer with a special flash-mode circuit.
+We use normal_ESP8266_4M1M image without VCC support (VCC measurement is done via dedicated external circuit). For bare ESP-12F module you need a USB programmer with a special flash-mode circuit. You can build one with following description: 
+
+https://github.com/maciejmalecki/esp8266-programmer
+
+Assuming you have the programmer, and appropriate USB driver is installed, just follow the steps:
+
+https://www.letscontrolit.com/wiki/index.php/Basics:_Connecting_and_flashing_the_ESP8266
+
+Just remember to use appropriate voltage (3.3V) and image size (4M1M for ESP-12 modules, 1M1M for ESP-01 or ESP-07 modules).
 
 ### Configuration
+After flashing restart the module and connect to the ESP_EASY access point via WiFi. Specify connectivity parameters suitable for your WiFi network.
+
+You can upload configuration from `src\espeasy\config.dat`. After uploading, you have to specify all credentials manually (including the ones for MQTT broker).
 
 ### Rules definition
 
