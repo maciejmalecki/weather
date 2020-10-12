@@ -1,6 +1,7 @@
 # WiFi Weather Station with ESP8266
 Here I describe a Weather station that I have assembled in a few instances and located in different places of my house. The station is able to collect several readings periodically (temperature, humidity and optionally an air pressure) and publish it via radio network.
 
+## Features
 The Weather station has following features:
 * radio communication via WiFi,
 * support for DHT sensor,
@@ -12,22 +13,26 @@ The Weather station has following features:
 
 The Weather station design is based on ESP8266 module, namely the ESP12F variant. Alternatively, prototyping boards like Wemos D1 Mini can be used, at price of higher memory consumption thus shorter battery life.
 
-Let's take a look at the overall architecture of the system, where Weather station coexists.
-
 ![WiFi topology](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/maciejmalecki/blog/master/sh/diagrams/wifi-topology.puml)
 
-## Schematics
+## Project structure
+Files in this repository are split into following three categories:
+* `src\espeasy` - Esp Easy configuration and rules files,
+* `src\fritzing` - Fritzing data file (schematics and PCB design),
+* `src\hass` - Sample `yaml` definition (using "package" approach) for Home Assistant.
 
+## Schematics
+The schematics of the device has been split into several sections for clarity. See below for detailed description of the sections.
 ![Schematics](img/weather_schem.png)
 
 ### ESP8266 MCU
+As the device uses bare-bone ESP module, there are several preconditions that must be fulfilled for MCU to start. This configuration is basically based on the one from Wemos D1 mini module. GPIO0, 2, 4 and CH_PD are pulled up via 10k resistors. GPIO15 is pulled down with 10k resistor. 
+
 The device uses following pins of ESP-12F MCU:
 * VCC, GND - for powering it up with 3.3V,
 * RESET - for manual reset and wake up circuitry,
-* CH_PD - must be kept high,
 * GPIO4 - input from weather sensor,
 * GPIO14 - input for mode selection switch,
-* GPIO16 - for wake up circuitry,
 * ADC - analog input for voltage measurement circuitry.
 
 ### Power supply unit
@@ -36,7 +41,7 @@ The device uses single Li-ion 4.2V cell to power itself. The voltage is lowered 
 ### Voltage measurement circuitry
 The device measures Li-ion cell voltage via ADC analog input. Voltage readouts are used for both reporing and to implement cell discharge protection (the voltage of Li-ion cell should never drop below 3V). Because ESP 8266 module (here ESP-12F) accepts only 0-1V on ADC pin, I use voltage divider to reduce voltage before it reaches ADC input. Two resistors R3 and R4 with relatively high resistance (220K and 68K respectively) are used to ensure low current flow thus reduce power consumption.
 
-### Mode selection, deep sleep and reset circuitry
+### Mode selection, wake-up and reset circuitry
 By default, the device connects to the WiFi network and MQTT server, gather sensor readings and publish them and then goes for deep sleep for predefined amount of minutes. 
 
 Reset switch (S1) shorts reset pin and GND. Reset pin must be pulled up (R2).
