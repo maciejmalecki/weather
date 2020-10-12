@@ -36,7 +36,10 @@ The device uses following pins of ESP-12F MCU:
 * ADC - analog input for voltage measurement circuitry.
 
 ### Power supply unit
-The device uses single Li-ion 4.2V cell to power itself. The voltage is lowered to nominal 3.3V with LDO voltage regulator (U1, Microship MCP1700-3302E/TO). This regular has a very low dropout voltage (178mV) and can deliver up to 250mA, which is sufficient for ESP8266 and DHT11 sensor. Two capacitors C1 and C2 are used to further stabilize the output voltage. This should ensure stable operation of ESP microcontroller during wake-up procedure.
+The device uses single Li-ion 4.2V cell to power itself. The LDO voltage regulator (U1, Microship MCP1700-3302E/TO) lowers the voltage to the nominal level of 3.3V. This regular has a very low dropout voltage (178mV) and can deliver up to 250mA, which is sufficient for ESP8266 and DHT11 sensor. Two capacitors C1 and C2 are used to further stabilize the output voltage. This should ensure stable operation of ESP microcontroller during wake-up procedure.
+
+#### Note on using breadboards
+The ESP8266 seems to have fairly high power consumption peak during a startup (it may exceed 200mA). If you use a cheap breadboard to prototype the power supply, and you'll try to plug ESP in, it is very likely the module won't boot properly. This is caused by the resistance of the breadboard itself and the connectors. It is okay to prototype power supply unit alone and test it without load, then mount it with soldered joints on prototype board and power the MCU that way (preferably using appropriate powering socket).
 
 ### Voltage measurement circuitry
 The device measures Li-ion cell voltage via ADC analog input. Voltage readouts are used for both reporing and to implement cell discharge protection (the voltage of Li-ion cell should never drop below 3V). Because ESP 8266 module (here ESP-12F) accepts only 0-1V on ADC pin, I use voltage divider to reduce voltage before it reaches ADC input. Two resistors R3 and R4 with relatively high resistance (220K and 68K respectively) are used to ensure low current flow thus reduce power consumption.
