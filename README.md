@@ -33,6 +33,7 @@ The device uses following pins of ESP-12F MCU:
 * RESET - for manual reset and wake up circuitry,
 * GPIO4 - input from weather sensor,
 * GPIO14 - input for mode selection switch,
+* GPIO16 - for wake up circuitry (connected with RESET),
 * ADC - analog input for voltage measurement circuitry.
 
 ### Power supply unit
@@ -96,6 +97,8 @@ We use normal_ESP8266_4M1M image without VCC support (VCC measurement is done vi
 
 ### PCB design
 ![PCB](img/weather_pcb.png)
+
+### Note on power consumption
 
 ### Running the device
 Properly assembled and configured device runs as soon as it is powered up (just plug the power source into the motherboard). By default, it runs in a production mode, where it:
