@@ -30,13 +30,13 @@ on evtStart do
 endon
 
 on evtPublish do
-  Publish,%sysname%_%unit%/vcc,[vcc#vcc]
-  Publish,%sysname%_%unit%/status,[dummy#mode]
+  Publish,%sysname%/vcc,[vcc#vcc]
+  Publish,%sysname%/status,[dummy#mode]
   Let,3,%unixday_sec%-%v1%
-  Publish,%sysname%_%unit%/time0,%v2%
-  Publish,%sysname%_%unit%/time1,%v3%
-  Publish,%sysname%_%unit%/temp,[weather#temp]
-  Publish,%sysname%_%unit%/hum,[weather#hum]
+  Publish,%sysname%/time0,%v2%
+  Publish,%sysname%/time1,%v3%
+  Publish,%sysname%/temp,[weather#temp]
+  Publish,%sysname%/hum,[weather#hum]
   AsyncEvent,evtNext
 endon
 

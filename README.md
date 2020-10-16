@@ -110,6 +110,13 @@ You can upload configuration from `src\espeasy\config.dat`. After uploading, you
 ![PCB](img/weather_pcb.png)
 
 ### Note on power consumption
+With ESP8266 removed, the circuit draws roughly 60uA of current. The DHT11 itself draws 50uA in idle mode. The remaining 10uA is consumed by voltage regular and voltage divider.
+
+The ESP-07/12 modules consume roughly 70mA in operational mode and only 10-20uA in deep sleep mode. To reduce time in operational mode (thus increase battery life time), following actions can be taken:
+* disable DHCP and use fixed IP,
+* extend sleep time (time is hardcoded in rules).
+
+Additional recommendation: leave config mode as soon as possible by restarting the unit. There is a protection which turns of config mode automatically after 10 minutes. There is a protection that turns the unit into deep sleep permanently if voltage on Li-ion battery drops below 3.4V (to preserve battery from excessive discharging and ESP module from running on too low voltage). Both protections are implemented in rules.
 
 ### Running the device
 Properly assembled and configured device runs as soon as it is powered up (just plug the power source into the motherboard). By default, it runs in a production mode, where it:
