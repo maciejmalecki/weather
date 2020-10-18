@@ -26,7 +26,7 @@ on evtStart do
     endif
     TaskValueSet,3,1,0
   endif
-  TimerSet,3,30
+  TimerSet,3,15
 endon
 
 on evtPublish do
@@ -48,19 +48,23 @@ on evtNext do
   endif
 endon
 
+// Republish in config mode
 on Rules#Timer=1 do
   AsyncEvent,evtPublish
 endon
 
+// Check config state
 on Rules#Timer=2 do
   TaskValueSet,3,1,[Plugin#GPIO#Pinstate#14]
   TimerSet,4,600
 endon
 
+// Cannot connect protection
 on Rules#Timer=3 do
   AsyncEvent,evtNext
 endon
 
+// Auto deepsleep after 10 mins of config mode
 on Rules#Timer=4 do
   DeepSleep,900
-endif
+endon
