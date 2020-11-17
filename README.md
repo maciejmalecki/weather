@@ -1,6 +1,8 @@
 # WiFi Weather Station with ESP8266
 Here I describe a Weather station that I have assembled in a few instances and located in different places of my house. The station is able to collect several readings periodically (temperature, humidity and optionally an air pressure) and publish it via radio network.
 
+![View from inside](img/weather-inside.jpg)
+
 ## Features
 The Weather station has following features:
 * radio communication via WiFi,
