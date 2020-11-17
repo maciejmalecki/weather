@@ -13,7 +13,7 @@ The Weather station has following features:
 * can be powered with single 4.2V Li-ion cell due to integrated LDO voltage regulator and voltage stabilizer,
 * usage of MQTT as integration backbone (in this case it integrates with Home Assistant-based central hub).
 
-The Weather station design is based on ESP8266 module, namely the ESP12F variant. Alternatively, prototyping boards like Wemos D1 Mini can be used, at price of higher memory consumption thus shorter battery life.
+The Weather station design is based on ESP8266 module, namely the ESP12F variant. Alternatively, prototyping boards like Wemos D1 Mini can be used, at price of higher power consumption thus shorter battery life.
 
 ![WiFi topology](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/maciejmalecki/blog/master/sh/diagrams/wifi-topology.puml)
 
