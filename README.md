@@ -140,9 +140,9 @@ The following configuration is valid only for BME variant. For DHT variant you c
 |17   |S1    | Switch      | Tact switch                |0.23         |
 |18   |S2    | Switch      | Tact switch                |0.23         |
 |19   |      | Cell basket | 18650 cell basket          |2.19         |
-|20   |      | Li-ion cell | 18650 4.2V ?mA cell        |6.50         |
+|20   |      | Li-ion cell | 18650 4.2V 3400mA cell     |20.99        |
 |21   |      | Case        | ABS case with ventilation  |10.00        |
-|     |      |             |                   **Total**|**55.71**    |
+|     |      |             |                   **Total**|**70.20**    |
 
 #### DHT unit
 | #   | Code | Name        | Description                | Price (PLN) |
@@ -166,9 +166,9 @@ The following configuration is valid only for BME variant. For DHT variant you c
 |17   |S1    | Switch      | Tact switch                |0.23         |
 |18   |S2    | Switch      | Tact switch                |0.23         |
 |19   |      | Cell basket | 18650 cell basket          |2.19         |
-|20   |      | Li-ion cell | 18650 4.2V ?mA cell        |6.50         |
+|20   |      | Li-ion cell | 18650 4.2V 3400mA cell     |20.99        |
 |21   |      | Case        | ABS case with ventilation  |10.00        |
-|     |      |             |                   **Total**|**46.49**    |
+|     |      |             |                   **Total**|**60.98**    |
 
 ### PCB design
 
