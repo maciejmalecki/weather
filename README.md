@@ -84,11 +84,35 @@ Just remember to use appropriate voltage (3.3V) and image size (4M1M for ESP-12 
 ### Configuration
 After flashing restart the module and connect to the ESP_EASY access point via WiFi. Specify connectivity parameters suitable for your WiFi network.
 
-You can download configuration from `src\espeasy\config.dat`. After uploading, you have to specify all credentials manually (including the ones for MQTT broker). Please note that there are separate configuration files per module type, that is: ESP-07 and ESP-12F. I have also noticed, that config files between different versions of ESP-12F (S/E/F) are not interchangeable, so are the configs between different versions of ESP Easy firmware.
+You can download configuration from `src/espeasy/config.dat`. After uploading, you have to specify all credentials manually (including the ones for MQTT broker). Please note that there are separate configuration files per module type, that is: ESP-07 and ESP-12F. I have also noticed, that config files between different versions of ESP-12F (S/E/F) are not interchangeable, so are the configs between different versions of ESP Easy firmware.
 
-t.b.d.: ESP Easy configuration description
+Below there are manual steps to configure ESP Easy described. This should work no matter which version of ESP module as well ESP Easy firmware are used.
 
-### Rules definition
+#### Configuration tab
+The following configuration is valid only for BME variant. For DHT variant you can skip this configuration tab.
+
+1. Enable I2C interface.
+2. Configure I2C pins: GPIO4 for, GPIO5 for (opposite to the default settings).
+
+#### Hardware tab
+1. Configure GPIOx for input (mode selection button).
+
+#### Devices tab
+1. Configure device 2 as Analog Input device.
+2. Configure device 3 as Dummy device.
+
+##### BME variant
+1. Configure device 1 as BMx280 sensor.
+
+##### DHT variant
+1. Configure device 1 as DHT sensor.
+
+#### Advanced settings tab
+1. Enable rule engine.
+2. Use old rules syntax.
+
+#### Rules tab 
+1. Paste content of `src/espeasy/bme/rules1.txt` (BME) or `src/espeasy/dht/rules1.txt` (DHT) into the rule are of rule set 1.
 
 ## Hardware assembly
 
