@@ -134,6 +134,7 @@ The following configuration is valid only for BME variant. For DHT variant you c
 |12   |R7    | Resistor    | 10K                        |0.02         |
 |13   |R8    | Resistor    | 10K                        |0.02         |
 |14   |R9    | Resistor    | 10K                        |0.02         |
+|15   |R10   | Resistor    | 10K                        |0.02         |
 |15   |C1    | Capacitor   | Electrolytic, 1000uF       |0.50         |
 |16   |C2    | Capacitor   | Ceramic, 100nF             |1.39         |
 |17   |S1    | Switch      | Tact switch                |0.23         |
@@ -141,7 +142,7 @@ The following configuration is valid only for BME variant. For DHT variant you c
 |19   |      | Cell basket | 18650 cell basket          |2.19         |
 |20   |      | Li-ion cell | 18650 4.2V ?mA cell        |6.50         |
 |21   |      | Case        | ABS case with ventilation  |10.00        |
-|     |      |             |                   **Total**|**46.49**    |
+|     |      |             |                   **Total**|**55.71**    |
 
 #### DHT unit
 | #   | Code | Name        | Description                | Price (PLN) |
