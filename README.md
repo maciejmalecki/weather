@@ -64,6 +64,8 @@ To ensure that ESP chip can wake up itself, RESET and GPIO16 pins must be connec
 
 ### Sensor circuitry
 #### BME variant
+The BME280 variant is recommended one because of very low power consumption in standby mode (an order of uA), extended functionality (temperature, humidity and pressure) and outstanding precision and ranges. The BME280 is powered all the time and communicates with I2C bus with ESP 8266 microcontroller. Both signal lines are additionally pulled up with pair of 10K resistors.
+
 #### DHT variant
 The cheaper version involves DHT11 sensor. It sends data digitally via single signal line. It consumes 60-150uA when in standby mode (not measuring) and 0.5-2.5mA when measuring. In this particular project DHT11 is powered all the time, because it takes long time after powering this up to get reasonable readings. Depending on DHT11 model, it may require additional pull up register between data signal pin and VCC (10K should be just ok).
 
@@ -84,11 +86,102 @@ Just remember to use appropriate voltage (3.3V) and image size (4M1M for ESP-12 
 ### Configuration
 After flashing restart the module and connect to the ESP_EASY access point via WiFi. Specify connectivity parameters suitable for your WiFi network.
 
-You can download configuration from `src\espeasy\config.dat`. After uploading, you have to specify all credentials manually (including the ones for MQTT broker). Please note that there are separate configuration files per module type, that is: ESP-07 and ESP-12F. I have also noticed, that config files between different versions of ESP-12F (S/E/F) are not interchangeable, so are the configs between different versions of ESP Easy firmware.
+You can download configuration from `src/espeasy/config.dat`. After uploading, you have to specify all credentials manually (including the ones for MQTT broker). Please note that there are separate configuration files per module type, that is: ESP-07 and ESP-12F. I have also noticed, that config files between different versions of ESP-12F (S/E/F) are not interchangeable, so are the configs between different versions of ESP Easy firmware.
 
-t.b.d.: ESP Easy configuration description
+Below there are manual steps to configure ESP Easy described. This should work no matter which version of ESP module as well ESP Easy firmware are used.
 
-### Rules definition
+#### Configuration tab
+The following configuration is valid only for BME variant. For DHT variant you can skip this configuration tab.
+
+1. Enable I2C interface.
+2. Configure I2C pins: GPIO4 for, GPIO5 for (opposite to the default settings).
+
+#### Hardware tab
+1. Configure GPIOx for input (mode selection button).
+
+#### Devices tab
+Configure device 2 as Analog Input device.
+* Device: `Analog input - internal`
+* Name: `vcc`
+* Enabled: `yes`
+* Calibration Enabled: `yes`
+* Point 1: `0 = 0.000`
+* Point 2: `977 = 3.930`
+
+Note: the calibration may be different in case of different voltage divider used. You can easily calibrate the device by yourself my measuring battery voltage and matching it with "Current" value of the ADC input (which is a value between 0..1023).
+
+![Analog](img/weather-esp-vcc.png)
+
+Configure device 3 as Generic - Dummy Device:
+* Device: `Generic - Dummy Device`
+* Name: `dummy`
+* Enabled: `yes`
+* Output Data Type: `Single`
+* Values #1 name: `mode`
+
+![Dummy](img/weather-esp-dummy.png)
+
+##### BME variant
+1. Configure device 1 as BMx280 sensor.
+
+![Devices BME](img/weather-esp-devices.png)
+
+##### DHT variant
+1. Configure device 1 as DHT sensor.
+
+#### Advanced settings tab
+Change the following settings:
+* Rules: `yes`
+* Old Engine: `yes`
+
+![Settings](img/weather-esp-settings.png)
+
+#### Rules tab 
+Paste content of `src/espeasy/bme/rules1.txt` (BME) or `src/espeasy/dht/rules1.txt` (DHT) into the rule are of `Rules Set 1`.
+
+In order to change certain parameters of the device, the rules can be adjusted.
+##### Sleep time
+Sleep time is specified within event handler of `evtNext` custom event:
+```
+on evtNext do
+  if [dummy#mode]=0
+    DeepSleep,900
+  else
+    TimerSet,1,60
+  endif
+endon
+```
+Default value is 15 minutes (900 seconds). Change this value to order different sleeping time. Remember, that low values will make your battery life time shorter!
+
+##### Config mode time
+The device can be put into config mode by pressing `mode` button during startup/reset. To preserve battery and avoid situation, that device is accidentaly left in config mode, there is certain timeout of 10 minutes configured. To change this time modify second parameter of `TimerSet` command in `Timer 2` event handler:
+```
+on Rules#Timer=2 do
+  TaskValueSet,3,1,[Plugin#GPIO#Pinstate#14]
+  TimerSet,4,600
+endon
+```
+
+##### Connection time out time
+The device will send readouts and go into the deep sleep only when it connects to the MQTT broker successfully. There is certain timeout of 15 seconds - if connection cannot be obtained in that time, device goes to the sleep. This time can be adjusted in event handler of `evtStart` custom event - second parameter of `TimerSet,3` command at the end of the handler:
+```
+on evtStart do
+  TaskValueSet,3,1,1
+  Let,1,%unixday_sec%
+  if [Plugin#GPIO#Pinstate#14]=1
+    TimerSet,2,1
+  else
+    if [vcc#vcc]<3.40
+      DeepSleep,4294
+    endif
+    TaskValueSet,3,1,0
+  endif
+  TimerSet,3,15
+endon
+```
+
+##### Low voltage threshold
+If the voltage drops under certain threshold (3.40V), the device sleeps immediately (to protect Li-ion from complete discharging). Threshold voltage can be adjusted in `evtStart` event handler (see above).
 
 ## Hardware assembly
 
@@ -110,14 +203,15 @@ t.b.d.: ESP Easy configuration description
 |12   |R7    | Resistor    | 10K                        |0.02         |
 |13   |R8    | Resistor    | 10K                        |0.02         |
 |14   |R9    | Resistor    | 10K                        |0.02         |
+|15   |R10   | Resistor    | 10K                        |0.02         |
 |15   |C1    | Capacitor   | Electrolytic, 1000uF       |0.50         |
 |16   |C2    | Capacitor   | Ceramic, 100nF             |1.39         |
 |17   |S1    | Switch      | Tact switch                |0.23         |
 |18   |S2    | Switch      | Tact switch                |0.23         |
 |19   |      | Cell basket | 18650 cell basket          |2.19         |
-|20   |      | Li-ion cell | 18650 4.2V ?mA cell        |6.50         |
+|20   |      | Li-ion cell | 18650 4.2V 3400mA cell     |20.99        |
 |21   |      | Case        | ABS case with ventilation  |10.00        |
-|     |      |             |                   **Total**|**46.49**    |
+|     |      |             |                   **Total**|**70.20**    |
 
 #### DHT unit
 | #   | Code | Name        | Description                | Price (PLN) |
@@ -141,9 +235,9 @@ t.b.d.: ESP Easy configuration description
 |17   |S1    | Switch      | Tact switch                |0.23         |
 |18   |S2    | Switch      | Tact switch                |0.23         |
 |19   |      | Cell basket | 18650 cell basket          |2.19         |
-|20   |      | Li-ion cell | 18650 4.2V ?mA cell        |6.50         |
+|20   |      | Li-ion cell | 18650 4.2V 3400mA cell     |20.99        |
 |21   |      | Case        | ABS case with ventilation  |10.00        |
-|     |      |             |                   **Total**|**46.49**    |
+|     |      |             |                   **Total**|**60.98**    |
 
 ### PCB design
 
