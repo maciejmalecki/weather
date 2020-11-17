@@ -1,0 +1,67 @@
+on System#Boot do
+  AsyncEvent,evtStart
+endon
+
+on System#Wake do
+  AsyncEvent,evtStart
+endon
+
+on MQTT#Connected do
+  Let,2,%unixday_sec%-%v1%
+  AsyncEvent,evtPublish
+endon
+
+on MQTT#Disconnected do
+  AsyncEvent,evtNext
+endon
+
+on evtStart do
+  TaskValueSet,3,1,1
+  Let,1,%unixday_sec%
+  if [Plugin#GPIO#Pinstate#14]=1
+    TimerSet,2,1
+  else
+    if [vcc#vcc]<3.20
+      DeepSleep,4294
+    endif
+    TaskValueSet,3,1,0
+  endif
+  TimerSet,3,30
+endon
+
+on evtPublish do
+  Publish,%sysname%/vcc,[vcc#vcc]
+  Publish,%sysname%/status,[dummy#mode]
+  Let,3,%unixday_sec%-%v1%
+  Publish,%sysname%/time0,%v2%
+  Publish,%sysname%/time1,%v3%
+  Publish,%sysname%/temp,[weather#temp]
+  Publish,%sysname%/hum,[weather#hum]
+  Publish,%sysname%/press,[weather#press]
+  AsyncEvent,evtNext
+endon
+
+on evtNext do
+  if [dummy#mode]=0
+    DeepSleep,900
+  else
+    TimerSet,1,60
+  endif
+endon
+
+on Rules#Timer=1 do
+  AsyncEvent,evtPublish
+endon
+
+on Rules#Timer=2 do
+  TaskValueSet,3,1,[Plugin#GPIO#Pinstate#14]
+  TimerSet,4,600
+endon
+
+on Rules#Timer=3 do
+  AsyncEvent,evtNext
+endon
+
+on Rules#Timer=4 do
+  DeepSleep,900
+endif

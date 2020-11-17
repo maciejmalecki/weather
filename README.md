@@ -4,7 +4,7 @@ Here I describe a Weather station that I have assembled in a few instances and l
 ## Features
 The Weather station has following features:
 * radio communication via WiFi,
-* support for DHT sensor,
+* support for BME280 (BMP280) and DHT sensor,
 * deep sleep mode with additional "config" mode selector via momentary switch,
 * suitable for battery powering,
 * measures voltage level of power source (battery),
@@ -23,6 +23,11 @@ Files in this repository are split into following three categories:
 
 ## Schematics
 The schematics of the device has been split into several sections for clarity. See below for detailed description of the sections.
+
+### BME variant
+![Schematics](img/weather-reduced-bme_schem.png)
+
+### DHT variant
 ![Schematics](img/weather_schem.png)
 
 ### ESP8266 MCU
@@ -31,13 +36,16 @@ As the device uses bare-bone ESP module, there are several preconditions that mu
 The device uses following pins of ESP-12F MCU:
 * VCC, GND - for powering it up with 3.3V,
 * RESET - for manual reset and wake up circuitry,
-* GPIO4 - input from weather sensor,
+* GPIO4 - input from weather sensor (DHT11),
+* GPIO4, GPIO5 - I2C communication with weather sensor (BME280),
 * GPIO14 - input for mode selection switch,
 * GPIO16 - for wake up circuitry (connected with RESET),
 * ADC - analog input for voltage measurement circuitry.
 
 ### Power supply unit
-The device uses single Li-ion 4.2V cell to power itself. The LDO voltage regulator (U1, Microship MCP1700-3302E/TO) lowers the voltage to the nominal level of 3.3V. This regular has a very low dropout voltage (178mV) and can deliver up to 250mA, which is sufficient for ESP8266 and DHT11 sensor. Two capacitors C1 and C2 are used to further stabilize the output voltage. This should ensure stable operation of ESP microcontroller during wake-up procedure.
+The device uses single Li-ion 3.6 - 4.2V cell to power itself. The LDO voltage regulator (U1, Microship MCP1700-3302E/TO) lowers the voltage to the nominal level of 3.3V. This regular has a very low dropout voltage (178mV) and can deliver up to 250mA, which is sufficient for ESP8266 and DHT11 sensor. Two capacitors C1 and C2 are used to further stabilize the output voltage. This should ensure stable operation of ESP microcontroller during wake-up procedure.
+
+It is also possible to power this device with 3xAA NiMH cells (3.6V nominal).
 
 #### Note on using breadboards
 The ESP8266 seems to have fairly high power consumption peak during a startup (it may exceed 200mA). If you use a cheap breadboard to prototype the power supply, and you'll try to plug ESP in, it is very likely the module won't boot properly. This is caused by the resistance of the breadboard itself and the connectors. It is okay to prototype power supply unit alone and test it without load, then mount it with soldered joints on prototype board and power the MCU that way (preferably using appropriate powering socket).
@@ -55,7 +63,9 @@ To ensure HTTP access to the firmware (ESP Easy) there is a special mode of oper
 To ensure that ESP chip can wake up itself, RESET and GPIO16 pins must be connected.
 
 ### Sensor circuitry
-In this particular project I use DHT11 sensor which is cheap and accurate enough for indoor usages. It sends data digitally via single signal line. It consumes 60-150uA when in standby mode (not measuring) and 0.5-2.5mA when measuring. In this particular project DHT11 is powered all the time, because it takes long time after powering this up to get reasonable readings. Depending on DHT11 model, it may require additional pull up register between data signal pin and VCC (10K should be just ok).
+#### BME variant
+#### DHT variant
+The cheaper version involves DHT11 sensor. It sends data digitally via single signal line. It consumes 60-150uA when in standby mode (not measuring) and 0.5-2.5mA when measuring. In this particular project DHT11 is powered all the time, because it takes long time after powering this up to get reasonable readings. Depending on DHT11 model, it may require additional pull up register between data signal pin and VCC (10K should be just ok).
 
 ## Firmware
 This project uses ESP Easy firmware, which replaces the original AT firmware of the ESP-12F.
@@ -74,13 +84,42 @@ Just remember to use appropriate voltage (3.3V) and image size (4M1M for ESP-12 
 ### Configuration
 After flashing restart the module and connect to the ESP_EASY access point via WiFi. Specify connectivity parameters suitable for your WiFi network.
 
-You can upload configuration from `src\espeasy\config.dat`. After uploading, you have to specify all credentials manually (including the ones for MQTT broker).
+You can download configuration from `src\espeasy\config.dat`. After uploading, you have to specify all credentials manually (including the ones for MQTT broker). Please note that there are separate configuration files per module type, that is: ESP-07 and ESP-12F. I have also noticed, that config files between different versions of ESP-12F (S/E/F) are not interchangeable, so are the configs between different versions of ESP Easy firmware.
+
+t.b.d.: ESP Easy configuration description
 
 ### Rules definition
 
 ## Hardware assembly
 
 ### Bill of materials
+#### BME unit
+| #   | Code | Name        | Description                | Price (PLN) |
+|----:|:----:|-------------|----------------------------|------------:|
+|1    |ESP12F| MCU         | ESP-12F                    |12.99        |
+|2    |      | ESP Board   | SMD to THT adapter board   |2.90         |
+|3    |      | PCB         | Universal board 4x6cm      |2.99         |
+|4    |BME   | BME280      | Temperature,humidity and pressure sensor|14.00     |
+|5    |U1    | LDO Regulator|Microchip MCP1700-3302E/TO |1.59         |
+|6    |R1    | Resistor    | 10K                        |0.02         |
+|7    |R2    | Resistor    | 10K                        |0.02         |
+|8    |R3    | Resistor    | 220K                       |0.02         |
+|9    |R4    | Resistor    | 68K                        |0.02         |
+|10   |R5    | Resistor    | 10K                        |0.02         |
+|11   |R6    | Resistor    | 10K                        |0.02         |
+|12   |R7    | Resistor    | 10K                        |0.02         |
+|13   |R8    | Resistor    | 10K                        |0.02         |
+|14   |R9    | Resistor    | 10K                        |0.02         |
+|15   |C1    | Capacitor   | Electrolytic, 1000uF       |0.50         |
+|16   |C2    | Capacitor   | Ceramic, 100nF             |1.39         |
+|17   |S1    | Switch      | Tact switch                |0.23         |
+|18   |S2    | Switch      | Tact switch                |0.23         |
+|19   |      | Cell basket | 18650 cell basket          |2.19         |
+|20   |      | Li-ion cell | 18650 4.2V ?mA cell        |6.50         |
+|21   |      | Case        | ABS case with ventilation  |10.00        |
+|     |      |             |                   **Total**|**46.49**    |
+
+#### DHT unit
 | #   | Code | Name        | Description                | Price (PLN) |
 |----:|:----:|-------------|----------------------------|------------:|
 |1    |ESP12F| MCU         | ESP-12F                    |12.99        |
@@ -102,14 +141,26 @@ You can upload configuration from `src\espeasy\config.dat`. After uploading, you
 |17   |S1    | Switch      | Tact switch                |0.23         |
 |18   |S2    | Switch      | Tact switch                |0.23         |
 |19   |      | Cell basket | 18650 cell basket          |2.19         |
-|20   |      | Li-ion cell | 18650 4.2V 10800mA cell    |6.50         |
+|20   |      | Li-ion cell | 18650 4.2V ?mA cell        |6.50         |
 |21   |      | Case        | ABS case with ventilation  |10.00        |
 |     |      |             |                   **Total**|**46.49**    |
 
 ### PCB design
+
+#### BME variant
+![PCB](img/weather-reduced-bme_pcb.png)
+
+#### DHT variant
 ![PCB](img/weather_pcb.png)
 
 ### Note on power consumption
+With ESP8266 removed, the circuit draws roughly 60uA of current. The DHT11 itself draws 50uA in idle mode. The remaining 10uA is consumed by voltage regular and voltage divider.
+
+The ESP-07/12 modules consume roughly 70mA in operational mode and only 10-20uA in deep sleep mode. To reduce time in operational mode (thus increase battery life time), following actions can be taken:
+* disable DHCP and use fixed IP,
+* extend sleep time (time is hardcoded in rules).
+
+Additional recommendation: leave config mode as soon as possible by restarting the unit. There is a protection which turns of config mode automatically after 10 minutes. There is a protection that turns the unit into deep sleep permanently if voltage on Li-ion battery drops below 3.4V (to preserve battery from excessive discharging and ESP module from running on too low voltage). Both protections are implemented in rules.
 
 ### Running the device
 Properly assembled and configured device runs as soon as it is powered up (just plug the power source into the motherboard). By default, it runs in a production mode, where it:
