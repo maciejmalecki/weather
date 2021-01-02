@@ -30,14 +30,8 @@ on evtStart do
 endon
 
 on evtPublish do
-  Publish,%sysname%/vcc,[vcc#vcc]
-  Publish,%sysname%/status,[dummy#mode]
   Let,3,%unixday_sec%-%v1%
-  Publish,%sysname%/time0,%v2%
-  Publish,%sysname%/time1,%v3%
-  Publish,%sysname%/temp,[weather#temp]
-  Publish,%sysname%/hum,[weather#hum]
-  Publish,%sysname%/press,[weather#press]
+  Publish,%sysname%/json,'{"name":"%sysname%","vcc":[vcc#vcc],"status":[dummy#mode],"t0":%v2%,"t1":%v3%,"temp":[weather#temp],"hum":[weather#hum],"press":[weather#press]}'
   AsyncEvent,evtNext
 endon
 
