@@ -9,7 +9,7 @@ endon
 on MQTT#Connected do
   Let,2,%unixday_sec%-%v1%
   Let,4,1
-  if %v5%>0
+  if %v5%>0 // dont publish if no BME readings
     AsyncEvent,evtPublish
   endif
 endon
@@ -20,7 +20,7 @@ endon
 
 on weather#temp do
   Let,5,1
-  if %v4%>0
+  if %v4%>0 // dont publish if MQTT not connected
     AsyncEvent,evtPublish
   endif
 endon
@@ -28,15 +28,15 @@ endon
 on evtStart do
   TaskValueSet,3,1,1
   Let,1,%unixday_sec%
-  if [Plugin#GPIO#Pinstate#14]=1
+  if [Plugin#GPIO#Pinstate#14]=1 // check for config mode
     TimerSet,2,1
   else
-    if [vcc#vcc]<3.20
-      DeepSleep,4294
+    if [vcc#vcc]<3.20 // low power protection
+      DeepSleep,4294 // max sleep time
     endif
     TaskValueSet,3,1,0
   endif
-  TimerSet,3,30
+  TimerSet,3,30 // only 30sec waiting time for net
 endon
 
 on evtPublish do
@@ -45,27 +45,31 @@ on evtPublish do
   AsyncEvent,evtNext
 endon
 
-on evtNext do
+on evtNext do // next step depending on the mode
   if [dummy#mode]=0
-    DeepSleep,900
+    AsyncEvent,evtDeepSleep
   else
     TimerSet,1,60
   endif
 endon
 
-on Rules#Timer=1 do
+on evtDeepSleep do // normal mode, go to sleep, power off
+    DeepSleep,900
+endon
+
+on Rules#Timer=1 do // config mode
   AsyncEvent,evtPublish
 endon
 
-on Rules#Timer=2 do
+on Rules#Timer=2 do // confirm config mode
   TaskValueSet,3,1,[Plugin#GPIO#Pinstate#14]
   TimerSet,4,600
 endon
 
-on Rules#Timer=3 do
+on Rules#Timer=3 do // dont wait for net too long
   AsyncEvent,evtNext
 endon
 
-on Rules#Timer=4 do
-  DeepSleep,900
+on Rules#Timer=4 do // auto leave config
+    AsyncEvent,evtDeepSleep
 endif
