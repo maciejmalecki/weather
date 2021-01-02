@@ -8,11 +8,21 @@ endon
 
 on MQTT#Connected do
   Let,2,%unixday_sec%-%v1%
-  AsyncEvent,evtPublish
+  Let,4,1
+  if %v5%>0
+    AsyncEvent,evtPublish
+  endif
 endon
 
 on MQTT#Disconnected do
   AsyncEvent,evtNext
+endon
+
+on weather#temp do
+  Let,5,1
+  if %v4%>0
+    AsyncEvent,evtPublish
+  endif
 endon
 
 on evtStart do
